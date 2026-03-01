@@ -32,6 +32,12 @@ export class TicketsController {
     return this.ticketsService.findMyTickets(req.user.id);
   }
 
+  @Get(':id')
+  @UseGuards(JwtAuthGuard)
+  findOne(@Param('id') id: string) {
+    return this.ticketsService.findOnePublic(id);
+  }
+
   @Post()
   @UseGuards(JwtAuthGuard)
   create(@Request() req: any, @Body() dto: CreateTicketDto) {

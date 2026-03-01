@@ -88,6 +88,36 @@ let TicketsService = class TicketsService {
             .where((0, drizzle_orm_1.eq)(schema.tickets.userId, userId))
             .orderBy((0, drizzle_orm_1.desc)(schema.tickets.createdAt));
     }
+    async findOnePublic(ticketId) {
+        const [row] = await this.db
+            .select({
+            ticket: schema.tickets,
+            seller: {
+                id: schema.users.id,
+                name: schema.users.name,
+                avatar: schema.users.avatar,
+                mobile: schema.users.mobile,
+                mobileVisible: schema.users.mobileVisible,
+            },
+        })
+            .from(schema.tickets)
+            .innerJoin(schema.users, (0, drizzle_orm_1.eq)(schema.tickets.userId, schema.users.id))
+            .where((0, drizzle_orm_1.eq)(schema.tickets.id, ticketId));
+        if (!row) {
+            throw new common_1.NotFoundException('Ticket not found');
+        }
+        const { ticket, seller } = row;
+        return {
+            ...ticket,
+            seller: {
+                id: seller.id,
+                name: seller.name,
+                avatar: seller.avatar,
+                mobile: seller.mobileVisible === 'anyone' ? seller.mobile : null,
+                mobileVisible: seller.mobileVisible,
+            },
+        };
+    }
     async markAsSold(ticketId, userId) {
         const [ticket] = await this.db
             .select()

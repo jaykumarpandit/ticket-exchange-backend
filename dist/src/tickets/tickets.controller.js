@@ -28,6 +28,9 @@ let TicketsController = class TicketsController {
     findMyTickets(req) {
         return this.ticketsService.findMyTickets(req.user.id);
     }
+    findOne(id) {
+        return this.ticketsService.findOnePublic(id);
+    }
     create(req, dto) {
         return this.ticketsService.create(req.user.id, dto);
     }
@@ -54,6 +57,14 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", void 0)
 ], TicketsController.prototype, "findMyTickets", null);
+__decorate([
+    (0, common_1.Get)(':id'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", void 0)
+], TicketsController.prototype, "findOne", null);
 __decorate([
     (0, common_1.Post)(),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),

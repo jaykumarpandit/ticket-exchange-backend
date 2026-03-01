@@ -107,6 +107,40 @@ export class TicketsService {
       .orderBy(desc(schema.tickets.createdAt));
   }
 
+  async findOnePublic(ticketId: string) {
+    const [row] = await this.db
+      .select({
+        ticket: schema.tickets,
+        seller: {
+          id: schema.users.id,
+          name: schema.users.name,
+          avatar: schema.users.avatar,
+          mobile: schema.users.mobile,
+          mobileVisible: schema.users.mobileVisible,
+        },
+      })
+      .from(schema.tickets)
+      .innerJoin(schema.users, eq(schema.tickets.userId, schema.users.id))
+      .where(eq(schema.tickets.id, ticketId));
+
+    if (!row) {
+      throw new NotFoundException('Ticket not found');
+    }
+
+    const { ticket, seller } = row;
+
+    return {
+      ...ticket,
+      seller: {
+        id: seller.id,
+        name: seller.name,
+        avatar: seller.avatar,
+        mobile: seller.mobileVisible === 'anyone' ? seller.mobile : null,
+        mobileVisible: seller.mobileVisible,
+      },
+    };
+  }
+
   async markAsSold(ticketId: string, userId: string) {
     const [ticket] = await this.db
       .select()

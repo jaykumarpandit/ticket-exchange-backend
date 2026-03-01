@@ -55,6 +55,35 @@ export declare class TicketsController {
         price: number;
         status: string;
     }[]>;
+    findOne(id: string): Promise<{
+        seller: {
+            id: string;
+            name: string;
+            avatar: string;
+            mobile: string;
+            mobileVisible: string;
+        };
+        id: string;
+        createdAt: Date;
+        updatedAt: Date;
+        userId: string;
+        trainNumber: string;
+        trainName: string;
+        fromStation: string;
+        fromStationCode: string;
+        toStation: string;
+        toStationCode: string;
+        journeyDate: string;
+        pnr: string;
+        travelClass: string;
+        quota: string;
+        passengerName: string;
+        passengerAge: number;
+        passengerGender: string;
+        seatNumber: string;
+        price: number;
+        status: string;
+    }>;
     create(req: any, dto: CreateTicketDto): Promise<{
         id: string;
         createdAt: Date;
