@@ -5,6 +5,17 @@ import { AppModule } from './app.module';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
+  const frontendUrl = process.env.FRONTEND_URL ?? 'http://localhost:3000';
+  const corsOrigins = frontendUrl.split(',').map((o) => o.trim()).filter(Boolean);
+  const allowedOrigins = corsOrigins.length > 0 ? corsOrigins : ['http://localhost:3000'];
+  app.enableCors({
+    origin: allowedOrigins,
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
+    credentials: true,
+    optionsSuccessStatus: 204,
+  });
+
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
@@ -12,14 +23,6 @@ async function bootstrap() {
       forbidNonWhitelisted: true,
     }),
   );
-
-  const frontendUrl = process.env.FRONTEND_URL ?? 'http://localhost:3000';
-  const corsOrigins = frontendUrl.split(',').map((o) => o.trim());
-  app.enableCors({
-    origin: corsOrigins,
-    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
-    credentials: true,
-  });
 
   app.setGlobalPrefix('api');
 

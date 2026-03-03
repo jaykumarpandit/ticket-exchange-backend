@@ -5,6 +5,7 @@ import {
   boolean,
   timestamp,
   integer,
+  doublePrecision,
 } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
 
@@ -17,6 +18,19 @@ export const users = pgTable('users', {
   mobile: text('mobile'),
   mobileVisible: text('mobile_visible').default('anyone'), // 'anyone' | 'buyer'
   isProfileComplete: boolean('is_profile_complete').default(false).notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+});
+
+export const stations = pgTable('stations', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  code: text('code').unique().notNull(),
+  name: text('name').notNull(),
+  state: text('state'),
+  zone: text('zone'),
+  address: text('address'),
+  longitude: doublePrecision('longitude'),
+  latitude: doublePrecision('latitude'),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });
@@ -60,6 +74,8 @@ export const tickets = pgTable('tickets', {
 });
 
 // Relations
+export const stationsRelations = relations(stations, () => ({}));
+
 export const usersRelations = relations(users, ({ many }) => ({
   tickets: many(tickets),
 }));
@@ -74,5 +90,7 @@ export const ticketsRelations = relations(tickets, ({ one }) => ({
 // Types
 export type User = typeof users.$inferSelect;
 export type NewUser = typeof users.$inferInsert;
+export type Station = typeof stations.$inferSelect;
+export type NewStation = typeof stations.$inferInsert;
 export type Ticket = typeof tickets.$inferSelect;
 export type NewTicket = typeof tickets.$inferInsert;

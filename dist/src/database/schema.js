@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ticketsRelations = exports.usersRelations = exports.tickets = exports.users = void 0;
+exports.ticketsRelations = exports.usersRelations = exports.stationsRelations = exports.tickets = exports.stations = exports.users = void 0;
 const pg_core_1 = require("drizzle-orm/pg-core");
 const drizzle_orm_1 = require("drizzle-orm");
 exports.users = (0, pg_core_1.pgTable)('users', {
@@ -12,6 +12,18 @@ exports.users = (0, pg_core_1.pgTable)('users', {
     mobile: (0, pg_core_1.text)('mobile'),
     mobileVisible: (0, pg_core_1.text)('mobile_visible').default('anyone'),
     isProfileComplete: (0, pg_core_1.boolean)('is_profile_complete').default(false).notNull(),
+    createdAt: (0, pg_core_1.timestamp)('created_at').defaultNow().notNull(),
+    updatedAt: (0, pg_core_1.timestamp)('updated_at').defaultNow().notNull(),
+});
+exports.stations = (0, pg_core_1.pgTable)('stations', {
+    id: (0, pg_core_1.uuid)('id').defaultRandom().primaryKey(),
+    code: (0, pg_core_1.text)('code').unique().notNull(),
+    name: (0, pg_core_1.text)('name').notNull(),
+    state: (0, pg_core_1.text)('state'),
+    zone: (0, pg_core_1.text)('zone'),
+    address: (0, pg_core_1.text)('address'),
+    longitude: (0, pg_core_1.doublePrecision)('longitude'),
+    latitude: (0, pg_core_1.doublePrecision)('latitude'),
     createdAt: (0, pg_core_1.timestamp)('created_at').defaultNow().notNull(),
     updatedAt: (0, pg_core_1.timestamp)('updated_at').defaultNow().notNull(),
 });
@@ -39,6 +51,7 @@ exports.tickets = (0, pg_core_1.pgTable)('tickets', {
     createdAt: (0, pg_core_1.timestamp)('created_at').defaultNow().notNull(),
     updatedAt: (0, pg_core_1.timestamp)('updated_at').defaultNow().notNull(),
 });
+exports.stationsRelations = (0, drizzle_orm_1.relations)(exports.stations, () => ({}));
 exports.usersRelations = (0, drizzle_orm_1.relations)(exports.users, ({ many }) => ({
     tickets: many(exports.tickets),
 }));
